@@ -1,5 +1,5 @@
 check_rstudio <- function() {
-  requireNamespace("rstudioapi", quietly = T) && rstudioapi::isAvailable()
+  requireNamespace("rstudioapi", quietly = T) && rstudioapi::isAvailable() &&
 }
 
 tidylog_mask_selection <- function() {
@@ -18,7 +18,12 @@ tidylog_mask_selection <- function() {
                   function(x) paste0(as.character(x), collapse = "\n"))
   # exprs <- lapply(exprs, rlang::expr_text)
   masked_exprs <- paste0("mask::tidylog_mask(", paste0(exprs), ")")
-  rstudioapi::sendToConsole(masked_exprs, echo = F, focus = F)
+  
+  if(packageVersion("rstudioapi") >= "0.10") {
+    rstudioapi::sendToConsole(masked_exprs, echo = F, focus = F)
+  } else {
+    rstudioapi::sendToConsole(masked_exprs)
+  }
 }
 
 run_mask_in_console <- function(exprs) {

@@ -1,0 +1,5 @@
+Name: Run with tidylog
+Description: Evaluate active selection using tidylog
+Binding: tidylog_mask_selection
+Interactive: false
+

@@ -50,15 +50,26 @@ create_masked_env <- function(envir) {
   return(enclose_env)
 }
 
+
+exists_outside_global <- function(fun_name, envir) {
+  fun <- tryCatch(get(fun_name, envir), error = function(e) NULL)
+
+  if(!is.null(fun) && identical(environment(fun), globalenv())) {
+    fun <- NULL
+  }
+
+  is.null(fun)
+}
+
 make_masked_function <- function(x, envir) {
   fun <- rlang::enexpr(x)
   expr <- rlang::quo_get_expr(fun)
   fun_name <- coerce_function_name(expr)
 
-  if(is.null(tryCatch(get(fun_name, envir), error = function(e) NULL))) {
-      fun <- rlang::eval_tidy(fun)
-      environment(fun) <- envir
-      assign(fun_name, fun, envir)
+  if(exists_outside_global(fun_name, envir)) {
+    fun <- rlang::eval_tidy(fun)
+    environment(fun) <- envir
+    assign(fun_name, fun, envir)
   }
 
   return(get(fun_name, envir))

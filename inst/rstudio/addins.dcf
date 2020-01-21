@@ -1,5 +1,10 @@
 Name: Run with tidylog
-Description: Evaluate active selection using tidylog
+Description: Evaluate active selection using tidylog functions
 Binding: tidylog_mask_selection
+Interactive: false
+
+Name: Run with purrrgress
+Description: Evaluate active selection using purrrgress functions
+Binding: purrrgress_mask_selection
 Interactive: false
 

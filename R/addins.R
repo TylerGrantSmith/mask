@@ -10,22 +10,33 @@ generic_mask_selection <- function(mask) {
     text <- trimws(selection$text)
 
     if(text == "") { return() }
-    exprs <- evaluate::evaluate()
-
-    tryCatch({exprs <- parse(text = text, keep.source = T)})
+    exprs <- evaluate::parse_all(text, NULL, TRUE)
+    err <- attr(exprs, "PARSE_ERROR")
+    if (!is.null(err)) {
+      warn(paste0("Error: Unable to parse selection.\n", err$message,"\n"))
+      return()
+    }
     m <- mask()
-    for (i in 1:length(exprs)) {
+    # tryCatch({exprs <- parse(text = text, keep.source = T)})
+    for (i in 1:nrow(exprs)) {
       cat("\n")
-      expr <- exprs[[i]]
-      expr_src <- attr(exprs, "srcref")[[i]]
+      expr_text <- exprs$src[[i]]
+      expr <- exprs$expr[[i]][[1]]
+      expr <- call2(m, expr,
+                    .binding_env = binding_env,
+                    .expr_text = expr_text)
       rstudioapi::sendToConsole("", execute = F, focus = F, echo = F)
-      withAutoprint(call2(m,
-                 expr = expr,
-                 .binding_env = binding_env,
-                 .expr_text = expr_src),
-                 evaluated = T,
-                 local = caller_env(),
-                 echo = F)
+      withAutoprint(expr, evaluated = T, echo = F)
+      # expr <- exprs$expr[[i]]
+      # expr_src <- exprs$src[[i]]
+
+      # withAutoprint(call2(m,
+      #            expr = expr,
+      #            .binding_env = binding_env,
+      #            .expr_text = expr_src),
+      #            evaluated = T,
+      #            local = caller_env(),
+      #            echo = F)
     }
   }
 }

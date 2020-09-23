@@ -107,8 +107,8 @@ generate_mask <- function(envir, hidden) {
 #' @export
 print.mask <- function(x) {
   cat(paste("Mask",
-            env_name(attr(x, "masking_env")),
-            env_name(attr(x, "masked_env")),
+            rlang::env_name(attr(x, "masking_env")),
+            rlang::env_name(attr(x, "masked_env")),
             sep = "\n"))
 }
 
